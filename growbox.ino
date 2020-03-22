@@ -52,6 +52,7 @@ String getTime(Time tm) {
 }
 
 boolean onFlag = false; // Фллаг для определения нажатия кнопки
+boolean flag = false; // Флаг
 LiquidCrystal_I2C lcd(0x27,16,2);  // Устанавливаем дисплей
 
 DHT dht(DHTPIN, DHTTYPE); // Установка температурного датчика
@@ -98,22 +99,28 @@ void loop() {
   
 // Работа с кнопкой включения
 if (digitalRead(onButton) == HIGH && !onFlag) {
-    digitalWrite(onLed, !digitalRead(onLed)); // Зажигаем или тушим светодиод кнопки
-    digitalWrite(mainLedRele, !digitalRead(mainLedRele)); // Зажигаем или тушим светодиод 220
+    flag = !flag;
     onFlag = true;
   }
 if (digitalRead(onButton) == LOW && onFlag) {
     onFlag = false;
   }
   
-if (onFlag) {
-    analogWrite(mosModule2, 255); // Если включен основной светодиод то включаем кулер охлаждения
-} else {
-    digitalWrite(mosModule2, LOW); // Выключаем кулер
+if (flag) {
+    digitalWrite(onLed, HIGH); // Зажигаем светодиод кнопки
+    digitalWrite(mainLedRele, HIGH); // Зажигаем светодиод 220
+    analogWrite(mosModule1, 255); // Кулер с задней панели
+    analogWrite(mosModule2, 255); // Кулер охлаждения основного светодиода
+    analogWrite(mosModule3, 255); // Кулер с передней панели
+} 
+else {
+    digitalWrite(onLed, LOW); // Зажигаем светодиод кнопки
+    digitalWrite(mainLedRele, LOW); // Зажигаем светодиод 220
+    // Выключаем кулеры
+    digitalWrite(mosModule1, LOW);
+    digitalWrite(mosModule2, LOW);
+    analogWrite(mosModule3, 1); // Кулер с передней панели
 }
-
-// Управление скростью вращения куллеров
-analogWrite(mosModule3, 255);
 
 // Считывание показаний с температурного датчика
 int t = round(dht.readTemperature()); // Температура
