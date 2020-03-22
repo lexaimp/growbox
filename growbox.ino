@@ -14,7 +14,8 @@ const short onLed = 12; // Светодиод внутри кнопки
 const short resetLed = 13; // HDD светодиод
 // Модули управляющие скоростью вращения куллеров через шим
 const short mosModule1 = 11;
-const short mosModule2 = 10;
+const short mosModule2 = 10; // Кулер охлаждения основного светодиода
+const short mosModule3 = 5; // Кулер на передней панели
 // Пины чясов реального времени
 const short clk = 9;
 const short dat = 8;
@@ -58,14 +59,14 @@ DHT dht(DHTPIN, DHTTYPE); // Установка температурного д�
 
 void setup() {
   
-  /*
+/*
 // Установка времени
   rtc.halt(false); //запуск часов
   rtc.writeProtect(false); //снять защиту от записи
 // Год, Месяц, День, Время, день недели
-  Time t(2020, 3, 20, 19, 56, 00, Time::kFriday);
+  Time t(2020, 3, 22, 19, 16, 00, Time::kSunday);
   rtc.time(t);
-  */
+*/
 
 // Дисплей
   lcd.init(); // Инициализация                    
@@ -84,7 +85,7 @@ pinMode(mainLedRele, OUTPUT);
 // МосМодули
 pinMode(mosModule1, OUTPUT);
 pinMode(mosModule2, OUTPUT);
-
+pinMode(mosModule3, OUTPUT);
 
 // Светодиод reset
 pinMode(resetLed, OUTPUT);
@@ -104,9 +105,15 @@ if (digitalRead(onButton) == HIGH && !onFlag) {
 if (digitalRead(onButton) == LOW && onFlag) {
     onFlag = false;
   }
+  
+if (onFlag) {
+    analogWrite(mosModule2, 255); // Если включен основной светодиод то включаем кулер охлаждения
+} else {
+    digitalWrite(mosModule2, LOW); // Выключаем кулер
+}
 
 // Управление скростью вращения куллеров
-analogWrite(mosModule2, 250);
+analogWrite(mosModule3, 255);
 
 // Считывание показаний с температурного датчика
 int t = round(dht.readTemperature()); // Температура
