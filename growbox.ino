@@ -119,7 +119,7 @@ else {
     // Выключаем кулеры
     digitalWrite(mosModule1, LOW);
     digitalWrite(mosModule2, LOW);
-    analogWrite(mosModule3, 1); // Кулер с передней панели
+    digitalWrite(mosModule3, LOW); // Кулер с передней панели
 }
 
 // Считывание показаний с температурного датчика
